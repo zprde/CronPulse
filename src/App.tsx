@@ -3,20 +3,42 @@ import './App.css';
 import JobList from './components/JobList';
 import JobForm from './components/JobForm';
 import JobDetail from './components/JobDetail';
+import Login from './components/Login';
 import { jobsApi, type JobWithStatus, type CreateJobRequest } from './utils/api';
 
 function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const [jobs, setJobs] = useState<JobWithStatus[]>([]);
   const [selectedJobId, setSelectedJobId] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Check authentication on mount
+  useEffect(() => {
+    checkAuth();
+  }, []);
+
+  const checkAuth = async () => {
+    try {
+      const response = await fetch('/api/auth/me');
+      if (response.ok) {
+        setIsAuthenticated(true);
+      } else {
+        setIsAuthenticated(false);
+      }
+    } catch {
+      setIsAuthenticated(false);
+    }
+  };
+
   // Fetch jobs on mount and refresh every 30 seconds
   useEffect(() => {
-    fetchJobs();
-    const interval = setInterval(fetchJobs, 30000);
-    return () => clearInterval(interval);
-  }, []);
+    if (isAuthenticated) {
+      fetchJobs();
+      const interval = setInterval(fetchJobs, 30000);
+      return () => clearInterval(interval);
+    }
+  }, [isAuthenticated]);
 
   const fetchJobs = async () => {
     const response = await jobsApi.getAll();
@@ -44,6 +66,18 @@ function App() {
     }
   };
 
+  const handleLogout = async () => {
+    await fetch('/api/auth/logout', { method: 'POST' });
+    setIsAuthenticated(false);
+    setJobs([]); // Clear jobs on logout
+    setSelectedJobId(null); // Clear selected job on logout
+    setShowForm(false); // Hide form on logout
+  };
+
+  const handleLoginSuccess = () => {
+    setIsAuthenticated(true);
+  };
+
   const selectedJob = selectedJobId
     ? jobs.find((j) => j.config.id === selectedJobId)
     : null;
@@ -52,6 +86,24 @@ function App() {
   const healthyCount = jobs.filter((j) => j.status.status === 'healthy').length;
   const warningCount = jobs.filter((j) => j.status.status === 'warning').length;
   const criticalCount = jobs.filter((j) => j.status.status === 'critical').length;
+
+  if (isAuthenticated === null) {
+    return (
+      <div className="app">
+        <main className="container main-content">
+          <div className="loading-state">Loading authentication status...</div>
+        </main>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <div className="app">
+        <Login onLoginSuccess={handleLoginSuccess} />
+      </div>
+    );
+  }
 
   return (
     <div className="app">
@@ -62,11 +114,16 @@ function App() {
               <h1>⚡ CronPulse</h1>
               <p className="tagline">Monitor your cron jobs with heartbeat alerts</p>
             </div>
-            {!selectedJob && !showForm && (
-              <button onClick={() => setShowForm(true)} className="btn btn-primary">
-                + Add Job
+            <div className="header-actions">
+              {!selectedJob && !showForm && (
+                <button onClick={() => setShowForm(true)} className="btn btn-primary">
+                  + Add Job
+                </button>
+              )}
+              <button onClick={handleLogout} className="btn btn-secondary btn-sm">
+                Logout
               </button>
-            )}
+            </div>
           </div>
         </div>
       </header>

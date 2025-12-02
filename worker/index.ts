@@ -7,10 +7,21 @@ import type {
   JobStatus,
   PingRecord,
   HeartbeatRequest,
+  LoginRequest,
+  LoginResponse,
 } from './types';
 import { createStorage } from './storage';
 import { createTelegramNotifier } from './telegram';
 import { checkForMissedHeartbeats } from './alertChecker';
+import {
+  getSessionToken,
+  validateSession,
+  createSession,
+  deleteSession,
+  verifyAdminPassword,
+  createSessionCookie,
+  createLogoutCookie,
+} from './auth';
 
 export default {
   async fetch(request, env): Promise<Response> {
@@ -30,11 +41,48 @@ export default {
 
     try {
       const storage = createStorage(env);
+
+      // Authentication check (skip for public routes)
+      const publicPaths = [
+        '/api/heartbeat/',  // Heartbeat API must be public
+        '/api/auth/login',  // Login endpoint
+      ];
+      const isStaticAsset = url.pathname.match(/\.(css|js|png|jpg|svg|ico|webp)$/);
+      const isPublicRoute = publicPaths.some(path => url.pathname.startsWith(path));
+
+      // Check authentication for protected routes
+      if (!isPublicRoute && !isStaticAsset) {
+        const sessionToken = getSessionToken(request);
+        const session = await validateSession(sessionToken, env.CRONPULSE_KV);
+
+        // Redirect to login if not authenticated (HTML requests)
+        if (!session) {
+          const acceptsHtml = request.headers.get('Accept')?.includes('text/html');
+          if (acceptsHtml && !url.pathname.startsWith('/api/')) {
+            // Serve login page for unauthenticated HTML requests
+            return new Response(null, { status: 404 }); // Let SPA handle /login route
+          }
+          // Return 401 for API requests
+          if (url.pathname.startsWith('/api/')) {
+            return jsonResponse({ success: false, error: 'Unauthorized' }, 401);
+          }
+        }
+      }
+
       let response: Response;
 
       // Route API requests
       if (url.pathname.startsWith('/api/')) {
-        if (url.pathname === '/api/jobs' && request.method === 'GET') {
+        // Authentication endpoints (public)
+        if (url.pathname === '/api/auth/login' && request.method === 'POST') {
+          response = await handleLogin(request, env);
+        } else if (url.pathname === '/api/auth/logout' && request.method === 'POST') {
+          response = await handleLogout(request, env);
+        } else if (url.pathname === '/api/auth/me' && request.method === 'GET') {
+          response = await handleAuthMe(request, env);
+        }
+        // Job management endpoints (protected by middleware above)
+        else if (url.pathname === '/api/jobs' && request.method === 'GET') {
           response = await handleGetJobs(storage);
         } else if (url.pathname === '/api/jobs' && request.method === 'POST') {
           response = await handleCreateJob(request, storage);
@@ -255,6 +303,82 @@ async function handleHeartbeat(
 async function handleGetAlerts(storage: ReturnType<typeof createStorage>) {
   const alerts = await storage.getAlerts(50);
   return jsonResponse({ success: true, data: alerts });
+}
+
+// Authentication Handlers
+
+async function handleLogin(request: Request, env: Env): Promise<Response> {
+  try {
+    const body = (await request.json()) as LoginRequest;
+
+    if (!body.password) {
+      return jsonResponse<LoginResponse>(
+        { success: false, error: 'Password required' },
+        400
+      );
+    }
+
+    // Verify password
+    const isValid = await verifyAdminPassword(body.password, env);
+    if (!isValid) {
+      return jsonResponse<LoginResponse>(
+        { success: false, error: 'Invalid password' },
+        401
+      );
+    }
+
+    // Create session
+    const session = await createSession('admin', env.CRONPULSE_KV);
+
+    // Create response with session cookie
+    const response = jsonResponse<LoginResponse>({ success: true });
+    const headers = new Headers(response.headers);
+    headers.set('Set-Cookie', createSessionCookie(session.id));
+
+    return new Response(response.body, {
+      status: response.status,
+      headers,
+    });
+  } catch (error) {
+    return jsonResponse<LoginResponse>(
+      { success: false, error: 'Login failed' },
+      500
+    );
+  }
+}
+
+async function handleLogout(request: Request, env: Env): Promise<Response> {
+  const sessionToken = getSessionToken(request);
+
+  if (sessionToken) {
+    await deleteSession(sessionToken, env.CRONPULSE_KV);
+  }
+
+  const response = jsonResponse({ success: true });
+  const headers = new Headers(response.headers);
+  headers.set('Set-Cookie', createLogoutCookie());
+
+  return new Response(response.body, {
+    status: response.status,
+    headers,
+  });
+}
+
+async function handleAuthMe(request: Request, env: Env): Promise<Response> {
+  const sessionToken = getSessionToken(request);
+  const session = await validateSession(sessionToken, env.CRONPULSE_KV);
+
+  if (!session) {
+    return jsonResponse({ success: false, error: 'Not authenticated' }, 401);
+  }
+
+  return jsonResponse({
+    success: true,
+    data: {
+      userId: session.userId,
+      expiresAt: session.expiresAt,
+    },
+  });
 }
 
 // Utilities

@@ -34,10 +34,17 @@
 		]
 	},
 	/**
-	 * Environment Variables
-	 * TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID should be set as secrets:
-	 * wrangler secret put TELEGRAM_BOT_TOKEN
-	 * wrangler secret put TELEGRAM_CHAT_ID
+	 * Environment Variables and Secrets
+	 * 
+	 * Authentication (set via wrangler secret put):
+	 * - ADMIN_PASSWORD: Admin password for dashboard access
+	 *   npx wrangler secret put ADMIN_PASSWORD
+	 * 
+	 * Telegram Bot (set via wrangler secret put):
+	 * - TELEGRAM_BOT_TOKEN: Telegram bot API token
+	 *   npx wrangler secret put TELEGRAM_BOT_TOKEN
+	 * - TELEGRAM_CHAT_ID: Your Telegram chat ID for alerts
+	 *   npx wrangler secret put TELEGRAM_CHAT_ID
 	 */
 	"vars": {
 		"MAX_HISTORY_RECORDS": 50

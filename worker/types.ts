@@ -4,6 +4,10 @@ export interface Env {
     TELEGRAM_BOT_TOKEN?: string;
     TELEGRAM_CHAT_ID?: string;
     MAX_HISTORY_RECORDS: number;
+    // Authentication
+    ADMIN_PASSWORD?: string; // Plaintext password (for initial setup)
+    ADMIN_PASSWORD_HASH?: string; // PBKDF2 hash
+    SESSION_SECRET?: string; // For HMAC signing (future use)
 }
 
 // Job configuration stored in KV
@@ -88,3 +92,20 @@ export const KV_KEYS = {
     alertsIndex: () => 'alerts:index',
     alert: (alertId: string) => `alert:${alertId}`,
 } as const;
+
+// Authentication types
+export interface Session {
+    id: string;
+    userId: string;
+    createdAt: string;
+    expiresAt: string;
+}
+
+export interface LoginRequest {
+    password: string;
+}
+
+export interface LoginResponse {
+    success: boolean;
+    error?: string;
+}
