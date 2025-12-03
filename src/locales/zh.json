@@ -44,15 +44,21 @@
         "namePlaceholder": "数据库备份",
         "descriptionLabel": "描述",
         "descriptionPlaceholder": "生产环境数据库每日备份",
-        "intervalLabel": "预期间隔（秒）*",
-        "intervalHelp": "任务运行频率（例如，3600 = 1 小时）",
-        "thresholdLabel": "告警阈值（秒）",
-        "thresholdHelp": "告警前的宽限期（默认：300）",
+        "intervalLabel": "预期间隔 *",
+        "intervalHelp": "任务运行频率",
+        "thresholdLabel": "告警阈值",
+        "thresholdHelp": "告警前的宽限期",
         "cancelButton": "取消",
         "createButton": "创建任务",
         "updateButton": "更新任务",
         "creating": "创建中...",
         "updating": "更新中..."
+    },
+    "timeUnits": {
+        "seconds": "秒",
+        "minutes": "分",
+        "hours": "小时",
+        "days": "天"
     },
     "jobDetail": {
         "edit": "✏️ 编辑",

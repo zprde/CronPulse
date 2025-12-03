@@ -44,15 +44,21 @@
         "namePlaceholder": "Database Backup",
         "descriptionLabel": "Description",
         "descriptionPlaceholder": "Daily backup of production database",
-        "intervalLabel": "Expected Interval (seconds) *",
-        "intervalHelp": "How often this job runs (e.g., 3600 = 1 hour)",
-        "thresholdLabel": "Alert Threshold (seconds)",
-        "thresholdHelp": "Grace period before alerting (default: 300)",
+        "intervalLabel": "Expected Interval *",
+        "intervalHelp": "How often this job runs",
+        "thresholdLabel": "Alert Threshold",
+        "thresholdHelp": "Grace period before alerting",
         "cancelButton": "Cancel",
         "createButton": "Create Job",
         "updateButton": "Update Job",
         "creating": "Creating...",
         "updating": "Updating..."
+    },
+    "timeUnits": {
+        "seconds": "Seconds",
+        "minutes": "Minutes",
+        "hours": "Hours",
+        "days": "Days"
     },
     "jobDetail": {
         "edit": "✏️ Edit",
