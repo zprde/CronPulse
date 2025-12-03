@@ -109,7 +109,7 @@ export default {
           request.method === 'POST'
         ) {
           const jobId = url.pathname.split('/').pop()!;
-          response = await handleHeartbeat(jobId, request, storage);
+          response = await handleHeartbeat(jobId, request, storage, env);
         } else if (
           url.pathname.match(/^\/api\/jobs\/[^/]+\/test-notification$/) &&
           request.method === 'POST'
@@ -272,7 +272,8 @@ async function handleDeleteJob(
 async function handleHeartbeat(
   jobId: string,
   request: Request,
-  storage: ReturnType<typeof createStorage>
+  storage: ReturnType<typeof createStorage>,
+  env: Env,
 ) {
   const status = await storage.getJobStatus(jobId);
 
@@ -282,6 +283,29 @@ async function handleHeartbeat(
 
   const body = (await request.json().catch(() => ({}))) as HeartbeatRequest;
   const now = new Date().toISOString();
+
+  // Check for recovery
+  if (status.status === 'warning' || status.status === 'critical') {
+    const telegramNotifier = createTelegramNotifier(env); // Pass env here, need to ensure handleHeartbeat receives env
+    if (telegramNotifier) {
+      const config = await storage.getJobConfig(jobId);
+      if (config) {
+        const lastPing = new Date(status.lastPingTime).getTime();
+        const current = new Date(now).getTime();
+        const downtimeMs = current - lastPing;
+
+        // Format duration
+        const minutes = Math.floor(downtimeMs / 60000);
+        const hours = Math.floor(minutes / 60);
+        const durationStr = hours > 0
+          ? `${hours}h ${minutes % 60}m`
+          : `${minutes}m`;
+
+        // Fire and forget recovery notification
+        telegramNotifier.sendRecovery(config.name, durationStr).catch(console.error);
+      }
+    }
+  }
 
   // Update status
   const updatedStatus: JobStatus = {

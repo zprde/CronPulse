@@ -101,6 +101,45 @@ If you are seeing this, your Telegram integration is working correctly!`;
             return false;
         }
     }
+    /**
+     * Send recovery notification to Telegram
+     */
+    async sendRecovery(jobName: string, downtimeDuration: string): Promise<boolean> {
+        const message = `🟢 <b>CronPulse Recovery</b>
+
+<b>Job:</b> ${jobName}
+<b>Status:</b> RECOVERED
+<b>Downtime:</b> ${downtimeDuration}
+
+The job is now running correctly.`;
+
+        try {
+            const response = await fetch(
+                `https://api.telegram.org/bot${this.botToken}/sendMessage`,
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        chat_id: this.chatId,
+                        text: message,
+                        parse_mode: 'HTML',
+                    }),
+                }
+            );
+
+            if (!response.ok) {
+                console.error('Telegram API error:', await response.text());
+                return false;
+            }
+
+            return true;
+        } catch (error) {
+            console.error('Failed to send Telegram recovery message:', error);
+            return false;
+        }
+    }
 }
 
 /**
