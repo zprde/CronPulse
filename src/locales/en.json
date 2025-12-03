@@ -1,0 +1,88 @@
+{
+    "app": {
+        "title": "CronPulse",
+        "tagline": "Monitor your cron jobs with heartbeat alerts",
+        "footer": "CronPulse • Powered by Cloudflare Workers"
+    },
+    "auth": {
+        "title": "CronPulse",
+        "subtitle": "Dashboard Authentication",
+        "passwordLabel": "Admin Password",
+        "passwordPlaceholder": "Enter your password",
+        "loginButton": "Login",
+        "loggingIn": "Logging in...",
+        "logoutButton": "Logout",
+        "restrictedAccess": "Access restricted to authorized users only",
+        "loginFailed": "Login failed",
+        "networkError": "Network error. Please try again.",
+        "loadingAuth": "Loading authentication status..."
+    },
+    "stats": {
+        "totalJobs": "Total Jobs",
+        "healthy": "Healthy",
+        "warning": "Warning",
+        "critical": "Critical"
+    },
+    "jobList": {
+        "empty": {
+            "title": "No Jobs Yet",
+            "description": "Create your first cron job to start monitoring"
+        },
+        "addJob": "+ Add Job",
+        "viewDetails": "View Details",
+        "delete": "Delete",
+        "deleteConfirm": "Delete job \"{{name}}\"?",
+        "lastPing": "Last Ping",
+        "interval": "Interval",
+        "totalPings": "Total Pings",
+        "loading": "Loading jobs..."
+    },
+    "jobForm": {
+        "addTitle": "Add New Job",
+        "editTitle": "Edit Job",
+        "nameLabel": "Job Name *",
+        "namePlaceholder": "Database Backup",
+        "descriptionLabel": "Description",
+        "descriptionPlaceholder": "Daily backup of production database",
+        "intervalLabel": "Expected Interval (seconds) *",
+        "intervalHelp": "How often this job runs (e.g., 3600 = 1 hour)",
+        "thresholdLabel": "Alert Threshold (seconds)",
+        "thresholdHelp": "Grace period before alerting (default: 300)",
+        "cancelButton": "Cancel",
+        "createButton": "Create Job",
+        "updateButton": "Update Job",
+        "creating": "Creating...",
+        "updating": "Updating..."
+    },
+    "jobDetail": {
+        "edit": "✏️ Edit",
+        "backToList": "Back to List",
+        "configuration": "Configuration",
+        "status": "Status",
+        "integration": "Integration",
+        "recentHistory": "Recent History",
+        "expectedInterval": "Expected Interval",
+        "alertThreshold": "Alert Threshold",
+        "created": "Created",
+        "updated": "Updated",
+        "lastPing": "Last Ping",
+        "totalPings": "Total Pings",
+        "consecutiveMisses": "Consecutive Misses",
+        "integrationDescription": "Add this endpoint to your cron job to send heartbeats:",
+        "heartbeatUrl": "Heartbeat URL",
+        "curlExample": "cURL Example",
+        "bashExample": "Bash Script Example",
+        "bashComment1": "# Your cron job logic here",
+        "bashComment2": "echo \"Running job...\"",
+        "bashComment3": "# Send heartbeat",
+        "historySuccess": "✓ Success",
+        "copyUrl": "Copy URL",
+        "copyCommand": "Copy command",
+        "copyScript": "Copy script"
+    },
+    "status": {
+        "healthy": "healthy",
+        "warning": "warning",
+        "critical": "critical"
+    }
+}

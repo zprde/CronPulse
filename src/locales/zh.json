@@ -1,0 +1,88 @@
+{
+    "app": {
+        "title": "CronPulse",
+        "tagline": "通过心跳检测监控您的定时任务",
+        "footer": "CronPulse • 基于 Cloudflare Workers 构建"
+    },
+    "auth": {
+        "title": "CronPulse",
+        "subtitle": "仪表板身份验证",
+        "passwordLabel": "管理员密码",
+        "passwordPlaceholder": "请输入密码",
+        "loginButton": "登录",
+        "loggingIn": "登录中...",
+        "logoutButton": "退出登录",
+        "restrictedAccess": "仅限授权用户访问",
+        "loginFailed": "登录失败",
+        "networkError": "网络错误，请重试。",
+        "loadingAuth": "正在加载认证状态..."
+    },
+    "stats": {
+        "totalJobs": "任务总数",
+        "healthy": "健康",
+        "warning": "警告",
+        "critical": "严重"
+    },
+    "jobList": {
+        "empty": {
+            "title": "暂无任务",
+            "description": "创建您的第一个定时任务开始监控"
+        },
+        "addJob": "+ 添加任务",
+        "viewDetails": "查看详情",
+        "delete": "删除",
+        "deleteConfirm": "删除任务 \"{{name}}\"？",
+        "lastPing": "最后心跳",
+        "interval": "执行间隔",
+        "totalPings": "心跳总数",
+        "loading": "加载任务中..."
+    },
+    "jobForm": {
+        "addTitle": "添加新任务",
+        "editTitle": "编辑任务",
+        "nameLabel": "任务名称 *",
+        "namePlaceholder": "数据库备份",
+        "descriptionLabel": "描述",
+        "descriptionPlaceholder": "生产环境数据库每日备份",
+        "intervalLabel": "预期间隔（秒）*",
+        "intervalHelp": "任务运行频率（例如，3600 = 1 小时）",
+        "thresholdLabel": "告警阈值（秒）",
+        "thresholdHelp": "告警前的宽限期（默认：300）",
+        "cancelButton": "取消",
+        "createButton": "创建任务",
+        "updateButton": "更新任务",
+        "creating": "创建中...",
+        "updating": "更新中..."
+    },
+    "jobDetail": {
+        "edit": "✏️ 编辑",
+        "backToList": "返回列表",
+        "configuration": "配置",
+        "status": "状态",
+        "integration": "集成",
+        "recentHistory": "最近历史",
+        "expectedInterval": "预期间隔",
+        "alertThreshold": "告警阈值",
+        "created": "创建时间",
+        "updated": "更新时间",
+        "lastPing": "最后心跳",
+        "totalPings": "心跳总数",
+        "consecutiveMisses": "连续缺失",
+        "integrationDescription": "将此端点添加到您的定时任务以发送心跳：",
+        "heartbeatUrl": "心跳 URL",
+        "curlExample": "cURL 示例",
+        "bashExample": "Bash 脚本示例",
+        "bashComment1": "# 您的定时任务逻辑",
+        "bashComment2": "echo \"正在运行任务...\"",
+        "bashComment3": "# 发送心跳",
+        "historySuccess": "✓ 成功",
+        "copyUrl": "复制 URL",
+        "copyCommand": "复制命令",
+        "copyScript": "复制脚本"
+    },
+    "status": {
+        "healthy": "健康",
+        "warning": "警告",
+        "critical": "严重"
+    }
+}

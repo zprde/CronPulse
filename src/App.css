@@ -1,45 +1,110 @@
-#root {
-	max-width: 1280px;
-	margin: 0 auto;
-	padding: 2rem;
+.app {
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+}
+
+.app-header {
+	background: var(--bg-secondary);
+	border-bottom: 1px solid var(--border-color);
+	padding: 2rem 0;
+	margin-bottom: 2rem;
+}
+
+.header-content {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 2rem;
+}
+
+.header-actions {
+	display: flex;
+	gap: 0.75rem;
+	align-items: center;
+}
+
+.tagline {
+	color: var(--text-muted);
+	margin-top: 0.5rem;
+}
+
+.main-content {
+	flex: 1;
+	padding-bottom: 4rem;
+}
+
+.stats-grid {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	gap: 1rem;
+	margin-bottom: 2rem;
+}
+
+.stat-card {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	padding: 1.25rem;
+}
+
+.stat-icon {
+	font-size: 2rem;
+}
+
+.stat-info {
+	flex: 1;
+}
+
+.stat-number {
+	font-size: 2rem;
+	font-weight: 700;
+	line-height: 1;
+	margin-bottom: 0.25rem;
+	background: var(--accent-gradient);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	background-clip: text;
+}
+
+.stat-label {
+	font-size: 0.75rem;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	color: var(--text-muted);
+	font-weight: 600;
+}
+
+.loading-state {
+	text-align: center;
+	padding: 4rem 2rem;
+	color: var(--text-muted);
+}
+
+.app-footer {
+	margin-top: auto;
+	padding: 2rem 0;
+	border-top: 1px solid var(--border-color);
 	text-align: center;
 }
 
-.logo {
-	height: 6em;
-	padding: 1.5em;
-	will-change: filter;
-	transition: filter 300ms;
-}
-.logo:hover {
-	filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-	filter: drop-shadow(0 0 2em #61dafbaa);
-}
-.logo.cloudflare:hover {
-	filter: drop-shadow(0 0 2em #f6821faa);
-}
-
-@keyframes logo-spin {
-	from {
-		transform: rotate(0deg);
-	}
-	to {
-		transform: rotate(360deg);
+@media (max-width: 1024px) {
+	.stats-grid {
+		grid-template-columns: repeat(2, 1fr);
 	}
 }
 
-@media (prefers-reduced-motion: no-preference) {
-	a:nth-of-type(2) .logo {
-		animation: logo-spin infinite 20s linear;
+@media (max-width: 640px) {
+	.header-content {
+		flex-direction: column;
+		align-items: flex-start;
 	}
-}
 
-.card {
-	padding: 2em;
-}
+	.stats-grid {
+		grid-template-columns: 1fr;
+	}
 
-.read-the-docs {
-	color: #888;
+	.stat-card {
+		justify-content: center;
+	}
 }
