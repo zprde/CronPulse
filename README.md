@@ -77,7 +77,14 @@ npx wrangler secret put TELEGRAM_CHAT_ID
 # Paste your chat ID
 ```
 
-### 4. Deploy
+### 4. Set Up Admin Password
+
+```bash
+npx wrangler secret put ADMIN_PASSWORD
+# Type your password
+``` 
+
+### 5. Deploy
 
 ```bash
 npm run deploy
@@ -186,6 +193,7 @@ Set via `npx wrangler secret put <NAME>`:
 
 - `TELEGRAM_BOT_TOKEN` - Telegram bot authentication token
 - `TELEGRAM_CHAT_ID` - Your Telegram chat ID for alerts
+- `ADMIN_PASSWORD` - Admin password for dashboard access
 
 ### Wrangler Config
 

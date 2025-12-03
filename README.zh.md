@@ -76,7 +76,14 @@ npx wrangler secret put TELEGRAM_CHAT_ID
 # 粘贴您的聊天 ID
 ```
 
-### 4. 部署
+### 4. 设置管理员密码
+
+```bash
+npx wrangler secret put ADMIN_PASSWORD
+# 输入您的密码
+```
+
+### 5. 部署
 
 ```bash
 npm run deploy
@@ -185,6 +192,7 @@ cron-pulse/
 
 - `TELEGRAM_BOT_TOKEN` - Telegram 机器人认证令牌
 - `TELEGRAM_CHAT_ID` - 用于告警的 Telegram 聊天 ID
+- `ADMIN_PASSWORD` - 管理员密码
 
 ### Wrangler 配置
 
