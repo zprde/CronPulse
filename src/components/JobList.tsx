@@ -1,74 +1,77 @@
+import { useTranslation } from 'react-i18next';
 import type { JobWithStatus } from '../utils/api';
 import { formatRelativeTime, formatDuration } from '../utils/formatters';
 
 interface JobListProps {
-    jobs: JobWithStatus[];
-    onSelectJob: (jobId: string) => void;
-    onDeleteJob: (jobId: string) => void;
+	jobs: JobWithStatus[];
+	onSelectJob: (jobId: string) => void;
+	onDeleteJob: (jobId: string) => void;
 }
 
 export default function JobList({ jobs, onSelectJob, onDeleteJob }: JobListProps) {
-    if (jobs.length === 0) {
-        return (
-            <div className="empty-state">
-                <div className="empty-icon">📊</div>
-                <h3>No Jobs Yet</h3>
-                <p>Create your first cron job to start monitoring</p>
-            </div>
-        );
-    }
+	const { t } = useTranslation();
 
-    return (
-        <div className="job-list">
-            {jobs.map((job) => (
-                <div key={job.config.id} className="job-card card fade-in">
-                    <div className="job-header">
-                        <div className="job-info">
-                            <h3>{job.config.name}</h3>
-                            {job.config.description && (
-                                <p className="text-muted text-sm">{job.config.description}</p>
-                            )}
-                        </div>
-                        <span className={`status-badge status-${job.status.status}`}>
-                            {job.status.status}
-                        </span>
-                    </div>
+	if (jobs.length === 0) {
+		return (
+			<div className="empty-state">
+				<div className="empty-icon">📊</div>
+				<h3>{t('jobList.empty.title')}</h3>
+				<p>{t('jobList.empty.description')}</p>
+			</div>
+		);
+	}
 
-                    <div className="job-stats">
-                        <div className="stat">
-                            <span className="stat-label">Last Ping</span>
-                            <span className="stat-value">{formatRelativeTime(job.status.lastPingTime)}</span>
-                        </div>
-                        <div className="stat">
-                            <span className="stat-label">Interval</span>
-                            <span className="stat-value">{formatDuration(job.config.expectedInterval)}</span>
-                        </div>
-                        <div className="stat">
-                            <span className="stat-label">Total Pings</span>
-                            <span className="stat-value">{job.status.totalPings.toLocaleString()}</span>
-                        </div>
-                    </div>
+	return (
+		<div className="job-list">
+			{jobs.map((job) => (
+				<div key={job.config.id} className="job-card card fade-in">
+					<div className="job-header">
+						<div className="job-info">
+							<h3>{job.config.name}</h3>
+							{job.config.description && (
+								<p className="text-muted text-sm">{job.config.description}</p>
+							)}
+						</div>
+						<span className={`status-badge status-${job.status.status}`}>
+							{t(`status.${job.status.status}`)}
+						</span>
+					</div>
 
-                    <div className="job-actions">
-                        <button onClick={() => onSelectJob(job.config.id)} className="btn btn-secondary btn-sm">
-                            View Details
-                        </button>
-                        <button
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                if (confirm(`Delete job "${job.config.name}"?`)) {
-                                    onDeleteJob(job.config.id);
-                                }
-                            }}
-                            className="btn btn-danger btn-sm"
-                        >
-                            Delete
-                        </button>
-                    </div>
-                </div>
-            ))}
+					<div className="job-stats">
+						<div className="stat">
+							<span className="stat-label">{t('jobList.lastPing')}</span>
+							<span className="stat-value">{formatRelativeTime(job.status.lastPingTime)}</span>
+						</div>
+						<div className="stat">
+							<span className="stat-label">{t('jobList.interval')}</span>
+							<span className="stat-value">{formatDuration(job.config.expectedInterval)}</span>
+						</div>
+						<div className="stat">
+							<span className="stat-label">{t('jobList.totalPings')}</span>
+							<span className="stat-value">{job.status.totalPings.toLocaleString()}</span>
+						</div>
+					</div>
 
-            <style>{`
+					<div className="job-actions">
+						<button onClick={() => onSelectJob(job.config.id)} className="btn btn-secondary btn-sm">
+							{t('jobList.viewDetails')}
+						</button>
+						<button
+							onClick={(e) => {
+								e.stopPropagation();
+								if (confirm(t('jobList.deleteConfirm', { name: job.config.name }))) {
+									onDeleteJob(job.config.id);
+								}
+							}}
+							className="btn btn-danger btn-sm"
+						>
+							{t('jobList.delete')}
+						</button>
+					</div>
+				</div>
+			))}
+
+			<style>{`
 				.job-list {
 					display: grid;
 					gap: 1rem;
@@ -175,6 +178,6 @@ export default function JobList({ jobs, onSelectJob, onDeleteJob }: JobListProps
 					}
 				}
 			`}</style>
-        </div>
-    );
+		</div>
+	);
 }

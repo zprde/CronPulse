@@ -1,10 +1,12 @@
 import { useState, type FormEvent } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface LoginProps {
     onLoginSuccess: () => void;
 }
 
 export default function Login({ onLoginSuccess }: LoginProps) {
+    const { t } = useTranslation();
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -26,10 +28,10 @@ export default function Login({ onLoginSuccess }: LoginProps) {
             if (data.success) {
                 onLoginSuccess();
             } else {
-                setError(data.error || 'Login failed');
+                setError(data.error || t('auth.loginFailed'));
             }
         } catch (err) {
-            setError('Network error. Please try again.');
+            setError(t('auth.networkError'));
         } finally {
             setIsLoading(false);
         }
@@ -39,8 +41,8 @@ export default function Login({ onLoginSuccess }: LoginProps) {
         <div className="login-container">
             <div className="login-card card">
                 <div className="login-header">
-                    <h1>⚡ CronPulse</h1>
-                    <p className="login-subtitle">Dashboard Authentication</p>
+                    <h1>⚡ {t('auth.title')}</h1>
+                    <p className="login-subtitle">{t('auth.subtitle')}</p>
                 </div>
 
                 <form onSubmit={handleSubmit} className="login-form">
@@ -51,13 +53,13 @@ export default function Login({ onLoginSuccess }: LoginProps) {
                     )}
 
                     <div className="form-group">
-                        <label htmlFor="password">Admin Password</label>
+                        <label htmlFor="password">{t('auth.passwordLabel')}</label>
                         <input
                             type="password"
                             id="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            placeholder="Enter your password"
+                            placeholder={t('auth.passwordPlaceholder')}
                             required
                             autoFocus
                             disabled={isLoading}
@@ -69,13 +71,13 @@ export default function Login({ onLoginSuccess }: LoginProps) {
                         className="btn btn-primary btn-block"
                         disabled={isLoading || !password}
                     >
-                        {isLoading ? 'Logging in...' : 'Login'}
+                        {isLoading ? t('auth.loggingIn') : t('auth.loginButton')}
                     </button>
                 </form>
 
                 <div className="login-footer">
                     <p className="text-muted text-sm">
-                        Access restricted to authorized users only
+                        {t('auth.restrictedAccess')}
                     </p>
                 </div>
             </div>

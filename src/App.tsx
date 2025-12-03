@@ -1,12 +1,15 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import './App.css';
 import JobList from './components/JobList';
 import JobForm from './components/JobForm';
 import JobDetail from './components/JobDetail';
 import Login from './components/Login';
+import LanguageSwitcher from './components/LanguageSwitcher';
 import { jobsApi, type JobWithStatus, type CreateJobRequest } from './utils/api';
 
 function App() {
+  const { t } = useTranslation();
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const [jobs, setJobs] = useState<JobWithStatus[]>([]);
   const [selectedJobId, setSelectedJobId] = useState<string | null>(null);
@@ -123,7 +126,7 @@ function App() {
     return (
       <div className="app">
         <main className="container main-content">
-          <div className="loading-state">Loading authentication status...</div>
+          <div className="loading-state">{t('auth.loadingAuth')}</div>
         </main>
       </div>
     );
@@ -143,17 +146,18 @@ function App() {
         <div className="container">
           <div className="header-content">
             <div>
-              <h1>⚡ CronPulse</h1>
-              <p className="tagline">Monitor your cron jobs with heartbeat alerts</p>
+              <h1>⚡ {t('app.title')}</h1>
+              <p className="tagline">{t('app.tagline')}</p>
             </div>
             <div className="header-actions">
               {!selectedJob && !showForm && (
                 <button onClick={() => setShowForm(true)} className="btn btn-primary">
-                  + Add Job
+                  {t('jobList.addJob')}
                 </button>
               )}
+              <LanguageSwitcher />
               <button onClick={handleLogout} className="btn btn-secondary btn-sm">
-                Logout
+                {t('auth.logoutButton')}
               </button>
             </div>
           </div>
@@ -168,34 +172,34 @@ function App() {
                 <div className="stat-icon">📊</div>
                 <div className="stat-info">
                   <div className="stat-number">{jobs.length}</div>
-                  <div className="stat-label">Total Jobs</div>
+                  <div className="stat-label">{t('stats.totalJobs')}</div>
                 </div>
               </div>
               <div className="stat-card card">
                 <div className="stat-icon">✅</div>
                 <div className="stat-info">
                   <div className="stat-number">{healthyCount}</div>
-                  <div className="stat-label">Healthy</div>
+                  <div className="stat-label">{t('stats.healthy')}</div>
                 </div>
               </div>
               <div className="stat-card card">
                 <div className="stat-icon">⚠️</div>
                 <div className="stat-info">
                   <div className="stat-number">{warningCount}</div>
-                  <div className="stat-label">Warning</div>
+                  <div className="stat-label">{t('stats.warning')}</div>
                 </div>
               </div>
               <div className="stat-card card">
                 <div className="stat-icon">🔴</div>
                 <div className="stat-info">
                   <div className="stat-number">{criticalCount}</div>
-                  <div className="stat-label">Critical</div>
+                  <div className="stat-label">{t('stats.critical')}</div>
                 </div>
               </div>
             </div>
 
             {isLoading ? (
-              <div className="loading-state">Loading jobs...</div>
+              <div className="loading-state">{t('jobList.loading')}</div>
             ) : (
               <JobList
                 jobs={jobs}
@@ -228,7 +232,7 @@ function App() {
       <footer className="app-footer">
         <div className="container">
           <p className="text-muted text-sm">
-            CronPulse • Powered by Cloudflare Workers
+            {t('app.footer')}
           </p>
         </div>
       </footer>

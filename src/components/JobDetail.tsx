@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { JobWithStatus } from '../utils/api';
 import { formatRelativeTime, formatAbsoluteTime, formatDuration, getHeartbeatUrl, getCurlCommand } from '../utils/formatters';
 
@@ -9,6 +10,7 @@ interface JobDetailProps {
 }
 
 export default function JobDetail({ job, onClose, onEdit }: JobDetailProps) {
+    const { t } = useTranslation();
     const [showCopyFeedback, setShowCopyFeedback] = useState(false);
 
     const copyToClipboard = (text: string) => {
@@ -24,57 +26,57 @@ export default function JobDetail({ job, onClose, onEdit }: JobDetailProps) {
                     <div className="flex items-center gap-4 mb-4">
                         <h2>{job.config.name}</h2>
                         <span className={`status-badge status-${job.status.status}`}>
-                            {job.status.status}
+                            {t(`status.${job.status.status}`)}
                         </span>
                     </div>
                     {job.config.description && <p className="text-muted">{job.config.description}</p>}
                 </div>
                 <div className="detail-header-actions">
                     <button onClick={onEdit} className="btn btn-primary btn-sm">
-                        ✏️ Edit
+                        {t('jobDetail.edit')}
                     </button>
                     <button onClick={onClose} className="btn btn-secondary">
-                        Back to List
+                        {t('jobDetail.backToList')}
                     </button>
                 </div>
             </div>
 
             <div className="detail-grid">
                 <div className="card">
-                    <h3>Configuration</h3>
+                    <h3>{t('jobDetail.configuration')}</h3>
                     <div className="config-list">
                         <div className="config-item">
-                            <span className="config-label">Expected Interval</span>
+                            <span className="config-label">{t('jobDetail.expectedInterval')}</span>
                             <span className="config-value">{formatDuration(job.config.expectedInterval)}</span>
                         </div>
                         <div className="config-item">
-                            <span className="config-label">Alert Threshold</span>
+                            <span className="config-label">{t('jobDetail.alertThreshold')}</span>
                             <span className="config-value">{formatDuration(job.config.alertThreshold)}</span>
                         </div>
                         <div className="config-item">
-                            <span className="config-label">Created</span>
+                            <span className="config-label">{t('jobDetail.created')}</span>
                             <span className="config-value">{formatAbsoluteTime(job.config.createdAt)}</span>
                         </div>
                         <div className="config-item">
-                            <span className="config-label">Updated</span>
+                            <span className="config-label">{t('jobDetail.updated')}</span>
                             <span className="config-value">{formatAbsoluteTime(job.config.updatedAt)}</span>
                         </div>
                     </div>
                 </div>
 
                 <div className="card">
-                    <h3>Status</h3>
+                    <h3>{t('jobDetail.status')}</h3>
                     <div className="config-list">
                         <div className="config-item">
-                            <span className="config-label">Last Ping</span>
+                            <span className="config-label">{t('jobDetail.lastPing')}</span>
                             <span className="config-value">{formatRelativeTime(job.status.lastPingTime)}</span>
                         </div>
                         <div className="config-item">
-                            <span className="config-label">Total Pings</span>
+                            <span className="config-label">{t('jobDetail.totalPings')}</span>
                             <span className="config-value">{job.status.totalPings.toLocaleString()}</span>
                         </div>
                         <div className="config-item">
-                            <span className="config-label">Consecutive Misses</span>
+                            <span className="config-label">{t('jobDetail.consecutiveMisses')}</span>
                             <span className="config-value">{job.status.consecutiveMisses}</span>
                         </div>
                     </div>
@@ -82,17 +84,17 @@ export default function JobDetail({ job, onClose, onEdit }: JobDetailProps) {
             </div>
 
             <div className="card">
-                <h3>Integration</h3>
-                <p className="text-muted mb-4">Add this endpoint to your cron job to send heartbeats:</p>
+                <h3>{t('jobDetail.integration')}</h3>
+                <p className="text-muted mb-4">{t('jobDetail.integrationDescription')}</p>
 
                 <div className="integration-box">
-                    <label>Heartbeat URL</label>
+                    <label>{t('jobDetail.heartbeatUrl')}</label>
                     <div className="code-block">
                         <code>{getHeartbeatUrl(job.config.id)}</code>
                         <button
                             onClick={() => copyToClipboard(getHeartbeatUrl(job.config.id))}
                             className="copy-btn"
-                            aria-label="Copy URL"
+                            aria-label={t('jobDetail.copyUrl')}
                         >
                             {showCopyFeedback ? '✓' : '📋'}
                         </button>
@@ -100,13 +102,13 @@ export default function JobDetail({ job, onClose, onEdit }: JobDetailProps) {
                 </div>
 
                 <div className="integration-box">
-                    <label>cURL Example</label>
+                    <label>{t('jobDetail.curlExample')}</label>
                     <div className="code-block">
                         <code>{getCurlCommand(job.config.id)}</code>
                         <button
                             onClick={() => copyToClipboard(getCurlCommand(job.config.id))}
                             className="copy-btn"
-                            aria-label="Copy command"
+                            aria-label={t('jobDetail.copyCommand')}
                         >
                             {showCopyFeedback ? '✓' : '📋'}
                         </button>
@@ -114,20 +116,20 @@ export default function JobDetail({ job, onClose, onEdit }: JobDetailProps) {
                 </div>
 
                 <div className="integration-box">
-                    <label>Bash Script Example</label>
+                    <label>{t('jobDetail.bashExample')}</label>
                     <div className="code-block">
                         <code>
                             {`#!/bin/bash
-# Your cron job logic here
-echo "Running job..."
+${t('jobDetail.bashComment1')}
+${t('jobDetail.bashComment2')}
 
-# Send heartbeat
+${t('jobDetail.bashComment3')}
 ${getCurlCommand(job.config.id)}`}
                         </code>
                         <button
-                            onClick={() => copyToClipboard(`#!/bin/bash\n# Your cron job logic here\necho "Running job..."\n\n# Send heartbeat\n${getCurlCommand(job.config.id)}`)}
+                            onClick={() => copyToClipboard(`#!/bin/bash\n${t('jobDetail.bashComment1')}\n${t('jobDetail.bashComment2')}\n\n${t('jobDetail.bashComment3')}\n${getCurlCommand(job.config.id)}`)}
                             className="copy-btn"
-                            aria-label="Copy script"
+                            aria-label={t('jobDetail.copyScript')}
                         >
                             {showCopyFeedback ? '✓' : '📋'}
                         </button>

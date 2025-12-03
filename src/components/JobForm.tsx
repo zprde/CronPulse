@@ -1,4 +1,5 @@
 import { useState, useEffect, type FormEvent } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { CreateJobRequest, JobConfig } from '../utils/api';
 
 interface JobFormProps {
@@ -9,6 +10,7 @@ interface JobFormProps {
 }
 
 export default function JobForm({ onSubmit, onCancel, isLoading, initialData }: JobFormProps) {
+    const { t } = useTranslation();
     const [formData, setFormData] = useState<CreateJobRequest>({
         name: '',
         description: '',
@@ -39,34 +41,34 @@ export default function JobForm({ onSubmit, onCancel, isLoading, initialData }: 
 
     return (
         <form onSubmit={handleSubmit} className="job-form">
-            <h3>{isEditMode ? 'Edit Job' : 'Add New Job'}</h3>
+            <h3>{isEditMode ? t('jobForm.editTitle') : t('jobForm.addTitle')}</h3>
 
             <div className="form-group">
-                <label htmlFor="name">Job Name *</label>
+                <label htmlFor="name">{t('jobForm.nameLabel')}</label>
                 <input
                     type="text"
                     id="name"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     required
-                    placeholder="Database Backup"
+                    placeholder={t('jobForm.namePlaceholder')}
                 />
             </div>
 
             <div className="form-group">
-                <label htmlFor="description">Description</label>
+                <label htmlFor="description">{t('jobForm.descriptionLabel')}</label>
                 <textarea
                     id="description"
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    placeholder="Daily backup of production database"
+                    placeholder={t('jobForm.descriptionPlaceholder')}
                     rows={3}
                 />
             </div>
 
             <div className="form-row">
                 <div className="form-group">
-                    <label htmlFor="interval">Expected Interval (seconds) *</label>
+                    <label htmlFor="interval">{t('jobForm.intervalLabel')}</label>
                     <input
                         type="number"
                         id="interval"
@@ -78,12 +80,12 @@ export default function JobForm({ onSubmit, onCancel, isLoading, initialData }: 
                         min="1"
                     />
                     <small className="text-muted">
-                        How often this job runs (e.g., 3600 = 1 hour)
+                        {t('jobForm.intervalHelp')}
                     </small>
                 </div>
 
                 <div className="form-group">
-                    <label htmlFor="threshold">Alert Threshold (seconds)</label>
+                    <label htmlFor="threshold">{t('jobForm.thresholdLabel')}</label>
                     <input
                         type="number"
                         id="threshold"
@@ -93,16 +95,16 @@ export default function JobForm({ onSubmit, onCancel, isLoading, initialData }: 
                         }
                         min="0"
                     />
-                    <small className="text-muted">Grace period before alerting (default: 300)</small>
+                    <small className="text-muted">{t('jobForm.thresholdHelp')}</small>
                 </div>
             </div>
 
             <div className="form-actions">
                 <button type="button" onClick={onCancel} className="btn btn-secondary" disabled={isLoading}>
-                    Cancel
+                    {t('jobForm.cancelButton')}
                 </button>
                 <button type="submit" className="btn btn-primary" disabled={isLoading}>
-                    {isLoading ? (isEditMode ? 'Updating...' : 'Creating...') : (isEditMode ? 'Update Job' : 'Create Job')}
+                    {isLoading ? (isEditMode ? t('jobForm.updating') : t('jobForm.creating')) : (isEditMode ? t('jobForm.updateButton') : t('jobForm.createButton'))}
                 </button>
             </div>
 
