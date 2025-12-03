@@ -49,7 +49,7 @@ CronPulse is a lightweight, serverless cron job monitoring platform that helps y
 ### 1. Clone and Install
 
 ```bash
-git clone <your-repo>
+git clone https://github.com/zprde/CronPulse.git
 cd cron-pulse
 npm install
 ```

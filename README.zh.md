@@ -48,7 +48,7 @@ CronPulse 是一个轻量级、无服务器的定时任务监控平台，帮助�
 ### 1. 克隆并安装
 
 ```bash
-git clone <your-repo>
+git clone https://github.com/zprde/CronPulse.git
 cd cron-pulse
 npm install
 ```
