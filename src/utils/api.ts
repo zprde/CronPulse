@@ -103,6 +103,11 @@ export const jobsApi = {
         apiCall<{ deleted: string }>(`/jobs/${id}`, {
             method: 'DELETE',
         }),
+
+    sendTestNotification: (id: string) =>
+        apiCall<{ sent: boolean }>(`/jobs/${id}/test-notification`, {
+            method: 'POST',
+        }),
 };
 
 // Alerts API

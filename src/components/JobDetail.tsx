@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { JobWithStatus } from '../utils/api';
+import { jobsApi } from '../utils/api';
 import { formatRelativeTime, formatAbsoluteTime, formatDuration, getHeartbeatUrl, getCurlCommand } from '../utils/formatters';
 
 interface JobDetailProps {
@@ -12,11 +13,27 @@ interface JobDetailProps {
 export default function JobDetail({ job, onClose, onEdit }: JobDetailProps) {
     const { t } = useTranslation();
     const [showCopyFeedback, setShowCopyFeedback] = useState(false);
+    const [isSendingTest, setIsSendingTest] = useState(false);
 
     const copyToClipboard = (text: string) => {
         navigator.clipboard.writeText(text);
         setShowCopyFeedback(true);
         setTimeout(() => setShowCopyFeedback(false), 2000);
+    };
+
+    const handleTestAlert = async () => {
+        if (isSendingTest) return;
+
+        setIsSendingTest(true);
+        try {
+            await jobsApi.sendTestNotification(job.config.id);
+            alert(t('jobDetail.testAlertSuccess'));
+        } catch (error) {
+            console.error('Failed to send test alert:', error);
+            alert(t('jobDetail.testAlertError'));
+        } finally {
+            setIsSendingTest(false);
+        }
     };
 
     return (
@@ -32,6 +49,13 @@ export default function JobDetail({ job, onClose, onEdit }: JobDetailProps) {
                     {job.config.description && <p className="text-muted">{job.config.description}</p>}
                 </div>
                 <div className="detail-header-actions">
+                    <button
+                        onClick={handleTestAlert}
+                        className="btn btn-secondary btn-sm"
+                        disabled={isSendingTest}
+                    >
+                        {isSendingTest ? '...' : '🔔 ' + t('jobDetail.testAlert')}
+                    </button>
                     <button onClick={onEdit} className="btn btn-primary btn-sm">
                         {t('jobDetail.edit')}
                     </button>

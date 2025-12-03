@@ -84,7 +84,10 @@
         "historySuccess": "✓ 成功",
         "copyUrl": "复制 URL",
         "copyCommand": "复制命令",
-        "copyScript": "复制脚本"
+        "copyScript": "复制脚本",
+        "testAlert": "发送测试告警",
+        "testAlertSuccess": "测试告警已发送！",
+        "testAlertError": "发送告警失败"
     },
     "status": {
         "healthy": "健康",

@@ -84,7 +84,10 @@
         "historySuccess": "✓ Success",
         "copyUrl": "Copy URL",
         "copyCommand": "Copy command",
-        "copyScript": "Copy script"
+        "copyScript": "Copy script",
+        "testAlert": "Send Test Alert",
+        "testAlertSuccess": "Test alert sent!",
+        "testAlertError": "Failed to send alert"
     },
     "status": {
         "healthy": "healthy",

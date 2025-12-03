@@ -110,6 +110,12 @@ export default {
         ) {
           const jobId = url.pathname.split('/').pop()!;
           response = await handleHeartbeat(jobId, request, storage);
+        } else if (
+          url.pathname.match(/^\/api\/jobs\/[^/]+\/test-notification$/) &&
+          request.method === 'POST'
+        ) {
+          const jobId = url.pathname.split('/')[3]; // /api/jobs/:id/test-notification
+          response = await handleTestNotification(jobId, storage, env);
         } else if (url.pathname === '/api/alerts' && request.method === 'GET') {
           response = await handleGetAlerts(storage);
         } else {
@@ -303,6 +309,38 @@ async function handleHeartbeat(
 async function handleGetAlerts(storage: ReturnType<typeof createStorage>) {
   const alerts = await storage.getAlerts(50);
   return jsonResponse({ success: true, data: alerts });
+}
+
+async function handleTestNotification(
+  jobId: string,
+  storage: ReturnType<typeof createStorage>,
+  env: Env
+) {
+  const config = await storage.getJobConfig(jobId);
+
+  if (!config) {
+    return jsonResponse({ success: false, error: 'Job not found' }, 404);
+  }
+
+  const telegramNotifier = createTelegramNotifier(env);
+
+  if (!telegramNotifier) {
+    return jsonResponse(
+      { success: false, error: 'Telegram not configured' },
+      503
+    );
+  }
+
+  const success = await telegramNotifier.sendTestMessage(config.name);
+
+  if (!success) {
+    return jsonResponse(
+      { success: false, error: 'Failed to send Telegram message' },
+      500
+    );
+  }
+
+  return jsonResponse({ success: true, data: { sent: true } });
 }
 
 // Authentication Handlers

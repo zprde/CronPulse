@@ -64,6 +64,43 @@ export class TelegramNotifier {
 
 <b>Message:</b> ${alert.message}`;
     }
+    /**
+     * Send test message to Telegram
+     */
+    async sendTestMessage(jobName: string): Promise<boolean> {
+        const message = `🧪 <b>CronPulse Test Alert</b>
+
+This is a test notification for job: <b>${jobName}</b>
+
+If you are seeing this, your Telegram integration is working correctly!`;
+
+        try {
+            const response = await fetch(
+                `https://api.telegram.org/bot${this.botToken}/sendMessage`,
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        chat_id: this.chatId,
+                        text: message,
+                        parse_mode: 'HTML',
+                    }),
+                }
+            );
+
+            if (!response.ok) {
+                console.error('Telegram API error:', await response.text());
+                return false;
+            }
+
+            return true;
+        } catch (error) {
+            console.error('Failed to send Telegram test message:', error);
+            return false;
+        }
+    }
 }
 
 /**
