@@ -2,6 +2,9 @@
 
 > Monitor your cron jobs with heartbeat alerts powered by Cloudflare Workers
 
+**Languages**: English | [简体中文](README.zh.md)
+
+
 CronPulse is a lightweight, serverless cron job monitoring platform that helps you track your scheduled tasks and get notified when they fail to execute. Built on Cloudflare Workers with React frontend, it provides real-time monitoring with Telegram notifications.
 
 ## ✨ Features

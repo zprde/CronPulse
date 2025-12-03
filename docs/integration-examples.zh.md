@@ -1,98 +1,97 @@
-# Integration Examples for CronPulse
+# CronPulse 集成示例
 
-This document provides various examples of integrating your cron jobs with CronPulse.
+本文档提供了将您的定时任务与 CronPulse 集成的各种示例。
 
-**Languages**: English | [简体中文](integration-examples.zh.md)
+**语言**: [English](integration-examples.md) | 简体中文
 
+## 目录
 
-## Table of Contents
+- [Bash 脚本](#bash-脚本)
+- [Python 脚本](#python-脚本)
+- [Node.js 脚本](#nodejs-脚本)
+- [Cron 表达式示例](#cron-表达式示例)
 
-- [Bash Scripts](#bash-scripts)
-- [Python Scripts](#python-scripts)
-- [Node.js Scripts](#nodejs-scripts)
-- [Cron Expression Examples](#cron-expression-examples)
+## Bash 脚本
 
-## Bash Scripts
-
-### Basic Integration
+### 基础集成
 
 ```bash
 #!/bin/bash
 set -e
 
-# Your cron job logic
-echo "Starting backup..."
+# 您的定时任务逻辑
+echo "开始备份..."
 /usr/local/bin/backup-database.sh
-echo "Backup completed"
+echo "备份完成"
 
-# Send heartbeat to CronPulse
+# 向 CronPulse 发送心跳
 curl -X POST https://your-worker.workers.dev/api/heartbeat/job-123456
 ```
 
-### With Error Handling
+### 带错误处理
 
 ```bash
 #!/bin/bash
 
 HEARTBEAT_URL="https://your-worker.workers.dev/api/heartbeat/job-123456"
 
-# Run your job
+# 运行您的任务
 if /usr/local/bin/backup-database.sh; then
-    echo "Job succeeded - sending heartbeat"
+    echo "任务成功 - 发送心跳"
     curl -X POST "$HEARTBEAT_URL"
 else
-    echo "Job failed - skipping heartbeat"
+    echo "任务失败 - 跳过心跳"
     exit 1
 fi
 ```
 
-### With Metadata
+### 带元数据
 
 ```bash
 #!/bin/bash
 
 HEARTBEAT_URL="https://your-worker.workers.dev/api/heartbeat/job-123456"
 
-# Run job and capture stats
+# 运行任务并捕获统计信息
 START_TIME=$(date +%s)
 /usr/local/bin/backup-database.sh
 END_TIME=$(date +%s)
 DURATION=$((END_TIME - START_TIME))
 
-# Send heartbeat with metadata
+# 发送带元数据的心跳
 curl -X POST "$HEARTBEAT_URL" \
   -H "Content-Type: application/json" \
   -d "{\"metadata\": {\"duration\": $DURATION, \"server\": \"$(hostname)\"}}"
 ```
 
-## Python Scripts
+## Python 脚本
 
-### Basic Integration
+### 基础集成
 
 ```python
 #!/usr/bin/env python3
 import requests
 
 def main():
-    # Your cron job logic
-    print("Running database backup...")
+    # 您的定时任务逻辑
+    print("运行数据库备份...")
     backup_database()
-    print("Backup completed")
+    print("备份完成")
     
-    # Send heartbeat
+    # 发送心跳
     heartbeat_url = "https://your-worker.workers.dev/api/heartbeat/job-123456"
     response = requests.post(heartbeat_url)
     response.raise_for_status()
 
 def backup_database():
-    # Your backup logic here
+    # 您的备份逻辑
     pass
 
 if __name__ == "__main__":
     main()
 ```
 
-### With Error Handling
+### 带错误处理
 
 ```python
 #!/usr/bin/env python3
@@ -105,33 +104,33 @@ def send_heartbeat():
     try:
         response = requests.post(HEARTBEAT_URL, timeout=10)
         response.raise_for_status()
-        print("Heartbeat sent successfully")
+        print("心跳发送成功")
     except requests.RequestException as e:
-        print(f"Failed to send heartbeat: {e}", file=sys.stderr)
+        print(f"发送心跳失败: {e}", file=sys.stderr)
 
 def main():
     try:
-        # Your job logic
-        print("Starting job...")
+        # 您的任务逻辑
+        print("开始任务...")
         run_my_task()
-        print("Job completed successfully")
+        print("任务成功完成")
         
-        # Send heartbeat only on success
+        # 仅在成功时发送心跳
         send_heartbeat()
         
     except Exception as e:
-        print(f"Job failed: {e}", file=sys.stderr)
+        print(f"任务失败: {e}", file=sys.stderr)
         sys.exit(1)
 
 def run_my_task():
-    # Your task logic here
+    # 您的任务逻辑
     pass
 
 if __name__ == "__main__":
     main()
 ```
 
-### With Metadata
+### 带元数据
 
 ```python
 #!/usr/bin/env python3
@@ -146,13 +145,13 @@ def main():
     start_time = time.time()
     
     try:
-        # Your job logic
+        # 您的任务逻辑
         run_my_task()
         
-        # Calculate duration
+        # 计算持续时间
         duration = time.time() - start_time
         
-        # Send heartbeat with metadata
+        # 发送带元数据的心跳
         metadata = {
             "duration": round(duration, 2),
             "hostname": socket.gethostname(),
@@ -165,23 +164,23 @@ def main():
             timeout=10
         ).raise_for_status()
         
-        print(f"Job completed in {duration:.2f}s")
+        print(f"任务在 {duration:.2f}s 内完成")
         
     except Exception as e:
-        print(f"Job failed: {e}", file=sys.stderr)
+        print(f"任务失败: {e}", file=sys.stderr)
         sys.exit(1)
 
 def run_my_task():
-    # Your task logic here
+    # 您的任务逻辑
     pass
 
 if __name__ == "__main__":
     main()
 ```
 
-## Node.js Scripts
+## Node.js 脚本
 
-### Basic Integration
+### 基础集成
 
 ```javascript
 #!/usr/bin/env node
@@ -212,29 +211,29 @@ async function sendHeartbeat() {
 
 async function main() {
   try {
-    // Your job logic
-    console.log('Running job...');
+    // 您的任务逻辑
+    console.log('运行任务...');
     await runMyTask();
-    console.log('Job completed');
+    console.log('任务完成');
     
-    // Send heartbeat
+    // 发送心跳
     await sendHeartbeat();
-    console.log('Heartbeat sent');
+    console.log('心跳已发送');
     
   } catch (error) {
-    console.error('Job failed:', error);
+    console.error('任务失败:', error);
     process.exit(1);
   }
 }
 
 async function runMyTask() {
-  // Your task logic here
+  // 您的任务逻辑
 }
 
 main();
 ```
 
-### Using Fetch (Node 18+)
+### 使用 Fetch (Node 18+)
 
 ```javascript
 #!/usr/bin/env node
@@ -243,34 +242,34 @@ const HEARTBEAT_URL = 'https://your-worker.workers.dev/api/heartbeat/job-123456'
 
 async function main() {
   try {
-    // Your job logic
-    console.log('Running job...');
+    // 您的任务逻辑
+    console.log('运行任务...');
     await runMyTask();
-    console.log('Job completed');
+    console.log('任务完成');
     
-    // Send heartbeat
+    // 发送心跳
     const response = await fetch(HEARTBEAT_URL, { method: 'POST' });
     
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}`);
     }
     
-    console.log('Heartbeat sent');
+    console.log('心跳已发送');
     
   } catch (error) {
-    console.error('Job failed:', error);
+    console.error('任务失败:', error);
     process.exit(1);
   }
 }
 
 async function runMyTask() {
-  // Your task logic here
+  // 您的任务逻辑
 }
 
 main();
 ```
 
-### With Metadata
+### 带元数据
 
 ```javascript
 #!/usr/bin/env node
@@ -283,12 +282,12 @@ async function main() {
   const startTime = Date.now();
   
   try {
-    // Your job logic
+    // 您的任务逻辑
     await runMyTask();
     
     const duration = (Date.now() - startTime) / 1000;
     
-    // Send heartbeat with metadata
+    // 发送带元数据的心跳
     const response = await fetch(HEARTBEAT_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -305,66 +304,66 @@ async function main() {
       throw new Error(`HTTP ${response.status}`);
     }
     
-    console.log(`Job completed in ${duration.toFixed(2)}s`);
+    console.log(`任务在 ${duration.toFixed(2)}s 内完成`);
     
   } catch (error) {
-    console.error('Job failed:', error);
+    console.error('任务失败:', error);
     process.exit(1);
   }
 }
 
 async function runMyTask() {
-  // Your task logic here
+  // 您的任务逻辑
 }
 
 main();
 ```
 
-## Cron Expression Examples
+## Cron 表达式示例
 
-Here are common cron schedules and corresponding CronPulse `expectedInterval` values:
+以下是常见的 cron 计划和相应的 CronPulse `expectedInterval` 值：
 
-| Schedule | Cron Expression | Expected Interval (seconds) |
-|----------|-----------------|----------------------------|
-| Every minute | `* * * * *` | 60 |
-| Every 5 minutes | `*/5 * * * *` | 300 |
-| Every 15 minutes | `*/15 * * * *` | 900 |
-| Every hour | `0 * * * *` | 3600 |
-| Every 6 hours | `0 */6 * * *` | 21600 |
-| Daily at midnight | `0 0 * * *` | 86400 |
-| Daily at 2 AM | `0 2 * * *` | 86400 |
-| Weekly (Sunday 2 AM) | `0 2 * * 0` | 604800 |
-| Monthly (1st, 2 AM) | `0 2 1 * *` | 2592000 |
+| 计划 | Cron 表达式 | 预期间隔（秒） |
+|----------|-----------------|-------------------------------|
+| 每分钟 | `* * * * *` | 60 |
+| 每 5 分钟 | `*/5 * * * *` | 300 |
+| 每 15 分钟 | `*/15 * * * *` | 900 |
+| 每小时 | `0 * * * *` | 3600 |
+| 每 6 小时 | `0 */6 * * *` | 21600 |
+| 每天午夜 | `0 0 * * *` | 86400 |
+| 每天凌晨 2 点 | `0 2 * * *` | 86400 |
+| 每周（周日凌晨 2 点） | `0 2 * * 0` | 604800 |
+| 每月（1 号凌晨 2 点） | `0 2 1 * *` | 2592000 |
 
-### Recommended Alert Thresholds
+### 推荐的告警阈值
 
-For reliable monitoring, set your `alertThreshold` based on schedule:
+为了可靠的监控，根据计划设置您的 `alertThreshold`：
 
-- **Frequent jobs** (< 5 min): 60-300 seconds (1-5 minutes)
-- **Hourly jobs**: 300-600 seconds (5-10 minutes)
-- **Daily jobs**: 1800-3600 seconds (30-60 minutes)
-- **Weekly/Monthly**: 3600-7200 seconds (1-2 hours)
+- **频繁任务** (< 5 分钟): 60-300 秒（1-5 分钟）
+- **每小时任务**: 300-600 秒（5-10 分钟）
+- **每日任务**: 1800-3600 秒（30-60 分钟）
+- **每周/每月**: 3600-7200 秒（1-2 小时）
 
-## Tips & Best Practices
+## 提示和最佳实践
 
-1. **Send heartbeat only on success**: Don't send heartbeat if your job fails
-2. **Use timeouts**: Set reasonable timeouts for the heartbeat request (5-10 seconds)
-3. **Add retry logic**: Consider retrying failed heartbeat sends
-4. **Include metadata**: Track duration, hostname, etc. for debugging
-5. **Test first**: Manually test heartbeat endpoint before adding to cron
-6. **Monitor logs**: Check CronPulse dashboard for missed heartbeats
+1. **仅在成功时发送心跳**: 如果任务失败，不要发送心跳
+2. **使用超时**: 为心跳请求设置合理的超时时间（5-10 秒）
+3. **添加重试逻辑**: 考虑对失败的心跳发送进行重试
+4. **包含元数据**: 跟踪持续时间、主机名等以便调试
+5. **先测试**: 在添加到 cron 之前手动测试心跳端点
+6. **监控日志**: 检查 CronPulse 仪表板是否有错过的心跳
 
-## Testing Your Integration
+## 测试您的集成
 
-Before scheduling your cron job:
+在计划您的定时任务之前：
 
 ```bash
-# Test your script manually
+# 手动测试您的脚本
 ./your-script.sh
 
-# Verify heartbeat was received in CronPulse dashboard
-# Check "Last Ping" timestamp updated
+# 在 CronPulse 仪表板中验证心跳已收到
+# 检查"Last Ping"时间戳是否更新
 
-# Test with explicit curl
+# 使用显式 curl 测试
 curl -X POST https://your-worker.workers.dev/api/heartbeat/YOUR_JOB_ID
 ```

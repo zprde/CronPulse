@@ -2,6 +2,9 @@
 
 Session-based authentication to protect dashboard access while keeping heartbeat API public.
 
+**Languages**: English | [简体中文](authentication.zh.md)
+
+
 ---
 
 ## 🚀 Quick Setup
