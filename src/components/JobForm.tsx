@@ -1,13 +1,14 @@
-import { useState, type FormEvent } from 'react';
-import type { CreateJobRequest } from '../utils/api';
+import { useState, useEffect, type FormEvent } from 'react';
+import type { CreateJobRequest, JobConfig } from '../utils/api';
 
 interface JobFormProps {
     onSubmit: (data: CreateJobRequest) => void;
     onCancel: () => void;
     isLoading?: boolean;
+    initialData?: JobConfig; // For edit mode
 }
 
-export default function JobForm({ onSubmit, onCancel, isLoading }: JobFormProps) {
+export default function JobForm({ onSubmit, onCancel, isLoading, initialData }: JobFormProps) {
     const [formData, setFormData] = useState<CreateJobRequest>({
         name: '',
         description: '',
@@ -16,6 +17,21 @@ export default function JobForm({ onSubmit, onCancel, isLoading }: JobFormProps)
         tags: [],
     });
 
+    // Pre-fill form when editing
+    useEffect(() => {
+        if (initialData) {
+            setFormData({
+                name: initialData.name,
+                description: initialData.description || '',
+                expectedInterval: initialData.expectedInterval,
+                alertThreshold: initialData.alertThreshold,
+                tags: initialData.tags || [],
+            });
+        }
+    }, [initialData]);
+
+    const isEditMode = !!initialData;
+
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
         onSubmit(formData);
@@ -23,7 +39,7 @@ export default function JobForm({ onSubmit, onCancel, isLoading }: JobFormProps)
 
     return (
         <form onSubmit={handleSubmit} className="job-form">
-            <h3>Add New Job</h3>
+            <h3>{isEditMode ? 'Edit Job' : 'Add New Job'}</h3>
 
             <div className="form-group">
                 <label htmlFor="name">Job Name *</label>
@@ -86,7 +102,7 @@ export default function JobForm({ onSubmit, onCancel, isLoading }: JobFormProps)
                     Cancel
                 </button>
                 <button type="submit" className="btn btn-primary" disabled={isLoading}>
-                    {isLoading ? 'Creating...' : 'Create Job'}
+                    {isLoading ? (isEditMode ? 'Updating...' : 'Creating...') : (isEditMode ? 'Update Job' : 'Create Job')}
                 </button>
             </div>
 

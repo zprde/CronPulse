@@ -11,6 +11,7 @@ function App() {
   const [jobs, setJobs] = useState<JobWithStatus[]>([]);
   const [selectedJobId, setSelectedJobId] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
+  const [editingJobId, setEditingJobId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   // Check authentication on mount
@@ -66,6 +67,24 @@ function App() {
     }
   };
 
+  const handleUpdateJob = async (data: CreateJobRequest) => {
+    if (!editingJobId) return;
+
+    const response = await jobsApi.update(editingJobId, data);
+    if (response.success) {
+      await fetchJobs();
+      setShowForm(false);
+      setSelectedJobId(editingJobId); // 返回到编辑的 job 详情页
+      setEditingJobId(null);
+    }
+  };
+
+  const handleEditJob = (jobId: string) => {
+    setEditingJobId(jobId);
+    setShowForm(true);
+    setSelectedJobId(null);
+  };
+
   const handleLogout = async () => {
     await fetch('/api/auth/logout', { method: 'POST' });
     setIsAuthenticated(false);
@@ -78,8 +97,21 @@ function App() {
     setIsAuthenticated(true);
   };
 
+  const handleCancelForm = () => {
+    if (editingJobId) {
+      // 如果是编辑模式，返回到详情页
+      setSelectedJobId(editingJobId);
+    }
+    setShowForm(false);
+    setEditingJobId(null);
+  };
+
   const selectedJob = selectedJobId
     ? jobs.find((j) => j.config.id === selectedJobId)
+    : null;
+
+  const editingJob = editingJobId
+    ? jobs.find((j) => j.config.id === editingJobId)
     : null;
 
   // Calculate stats
@@ -177,8 +209,9 @@ function App() {
         {showForm && (
           <div className="card">
             <JobForm
-              onSubmit={handleCreateJob}
-              onCancel={() => setShowForm(false)}
+              onSubmit={editingJobId ? handleUpdateJob : handleCreateJob}
+              onCancel={handleCancelForm}
+              initialData={editingJob?.config}
             />
           </div>
         )}
@@ -187,6 +220,7 @@ function App() {
           <JobDetail
             job={selectedJob}
             onClose={() => setSelectedJobId(null)}
+            onEdit={() => handleEditJob(selectedJob.config.id)}
           />
         )}
       </main>
@@ -203,4 +237,3 @@ function App() {
 }
 
 export default App;
-

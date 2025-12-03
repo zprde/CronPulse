@@ -5,9 +5,10 @@ import { formatRelativeTime, formatAbsoluteTime, formatDuration, getHeartbeatUrl
 interface JobDetailProps {
     job: JobWithStatus;
     onClose: () => void;
+    onEdit: () => void;
 }
 
-export default function JobDetail({ job, onClose }: JobDetailProps) {
+export default function JobDetail({ job, onClose, onEdit }: JobDetailProps) {
     const [showCopyFeedback, setShowCopyFeedback] = useState(false);
 
     const copyToClipboard = (text: string) => {
@@ -28,9 +29,14 @@ export default function JobDetail({ job, onClose }: JobDetailProps) {
                     </div>
                     {job.config.description && <p className="text-muted">{job.config.description}</p>}
                 </div>
-                <button onClick={onClose} className="btn btn-secondary">
-                    Back to List
-                </button>
+                <div className="detail-header-actions">
+                    <button onClick={onEdit} className="btn btn-primary btn-sm">
+                        ✏️ Edit
+                    </button>
+                    <button onClick={onClose} className="btn btn-secondary">
+                        Back to List
+                    </button>
+                </div>
             </div>
 
             <div className="detail-grid">
@@ -149,13 +155,17 @@ ${getCurlCommand(job.config.id)}`}
 				}
 
 				.detail-header {
-					display: flex;
-					justify-content: space-between;
-					align-items: flex-start;
-					margin-bottom: 2rem;
-					gap: 2rem;
-				}
+				display: flex;
+				justify-content: space-between;
+				align-items: flex-start;
+				margin-bottom: 2rem;
+				gap: 2rem;
+			}
 
+			.detail-header-actions {
+				display: flex;
+				gap: 0.75rem;
+			}
 				.detail-grid {
 					display: grid;
 					grid-template-columns: repeat(2, 1fr);
